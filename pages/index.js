@@ -194,7 +194,7 @@ export default function Home() {
               <div className="media-left">
                 <Image
                   // className={styles.logo}
-                  src="/venthone.png"
+                  src="/triglav.png"
                   alt="Venthone Logo"
                   width={120}
                   height={120}
