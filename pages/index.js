@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import _ from "lodash";
 import axios from "axios";
 import Image from "next/image";
+// import { exportPdf } from "@/utils/exportPdf";
+import Link from "next/link";
 import jsPDF from "jspdf";
+import "jspdf-autotable";
 
-const months = [
+export const months = [
   "January",
   "February",
   "March",
@@ -23,6 +26,8 @@ export default function Home() {
   const [values, setValues] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [name, setName] = useState("Christophe Moreira");
+  const [homeAddress, setHomeAddress] = useState("diegem");
 
   //to remove
   const [jsonValues, setJsonValues] = useState([]);
@@ -123,23 +128,61 @@ export default function Home() {
     const doc = new jsPDF();
 
     // Set the font and size
-    doc.setFont("helvetica");
-    doc.setFontSize(14);
-    doc.addImage("/venthone.png", "PNG", 15, 40, 180, 100);
-    doc.addPage();
+    // doc.setFont("helvetica");
+    // doc.setFontSize(14);
+    doc.addImage("/triglav.png", "PNG", 90, 10, 30, 30);
+    // doc.addPage();
     // Add the data to the pdf
-    values.forEach(function (value) {
-      if (value.distance != 0) {
-        doc.text(`Date: ${value.date}`, 10, 10);
-        doc.text(`From: ${value.from}`, 10, 20);
-        doc.text(`To: ${value.to}`, 10, 30);
-        doc.text(`Discription: ${value.description}`, 10, 40);
-        doc.text(`Distance: ${value.distance}`, 10, 50);
-        doc.addPage();
-      }
-    });
-    doc.text(`Total: ${calTotalKm().toFixed(2)}`, 10, 10);
+    // values.forEach(function (value) {
+    //   if (value.distance != 0) {
+    //     doc.text(`Date: ${value.date}`, 10, 10);
+    //     doc.text(`From: ${value.from}`, 10, 20);
+    //     doc.text(`To: ${value.to}`, 10, 30);
+    //     doc.text(`Discription: ${value.description}`, 10, 40);
+    //     doc.text(`Distance: ${value.distance}`, 10, 50);
+    //     doc.addPage();
+    //   }
+    // });
+    // doc.text(`Total: ${calTotalKm().toFixed(2)}`, 10, 10);
     // Save the pdf
+    doc.text("Vehicle Mileage", 10, 50);
+    doc.text(name, 10, 60);
+    doc.autoTable({
+      styles: { fontSize: 8 },
+      margin: { top: 70 },
+      didDrawPage: function (data) {
+        // Reseting top margin. The change will be reflected only after print the first page.
+        data.settings.margin.top = 10;
+      },
+      head: [["Day", "Activity", "Origin", "Destination", "Distance (km)"]],
+      body: values.map((res) => {
+        // console.log(addressesWithPrevious);
+        return [
+          {
+            content: res.date,
+          },
+          {
+            content: res.description,
+          },
+          {
+            content: res.from,
+            styles: { halign: "center" },
+          },
+          {
+            content: res.to,
+            styles: { halign: "center" },
+          },
+
+          {
+            content: res.distance.toFixed(2),
+            styles: { fontStyle: "bold", minCellHeight: 4 },
+          },
+        ];
+      }),
+
+      foot: [["Total", "", "", "", `${calTotalKm().toFixed(2)} km`]],
+    });
+
     doc.save("km.pdf");
   }
   return (
@@ -165,13 +208,49 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="columns">
+          <div className="column is-half">
+            <div className="field">
+              <label htmlFor="name" className="label">
+                Your Name:
+              </label>
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  id="namme"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="homeAddress" className="label">
+                Home Address:
+              </label>
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  id="homeAddress"
+                  value={homeAddress}
+                  onChange={(e) => setHomeAddress(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <label htmlFor="" className="label">
           Select month and year
         </label>
         <div className="field is-grouped">
           <div className="control">
             <div className="select">
-              <select onChange={(e) => setSelectedMonth(e.target.value)}>
+              <select
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                defaultValue={new Date().getMonth()}
+              >
                 {months.map((month, index) => (
                   <option value={index} key={month}>
                     {month}
@@ -197,13 +276,33 @@ export default function Home() {
             </button>
           </div>
           <div className="control">
-            <button className="button is-danger" onClick={() => exportToPdf()}>
+            <button
+              className="button is-danger"
+              // onClick={() =>
+              //   exportPdf(
+              //     "/venthone.png",
+              //     values,
+              //     calTotalKm(),
+              //     name,
+              //     homeAddress
+              //   )
+              // }
+              onClick={exportToPdf}
+            >
               <span>Export to PDF</span>
               <span className="icon">
                 <i className="fas fa-download"></i>
               </span>
             </button>
           </div>
+          {/* <div className="control">
+            <Link href="/auto-generate" className="button is-info">
+              <span>Auto Generate</span>
+              <span className="icon">
+                <i className="fas fa-arrow-right"></i>
+              </span>
+            </Link>
+          </div> */}
         </div>
 
         {jsonValues.length > 0 && <pre>{JSON.stringify(jsonValues)}</pre>}
