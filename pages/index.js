@@ -26,8 +26,8 @@ export default function Home() {
   const [values, setValues] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [name, setName] = useState("Christophe Moreira");
-  const [homeAddress, setHomeAddress] = useState("diegem");
+  const [name, setName] = useState("");
+  // const [homeAddress, setHomeAddress] = useState("diegem");
 
   //to remove
   const [jsonValues, setJsonValues] = useState([]);
@@ -224,7 +224,7 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="field">
+            {/* <div className="field">
               <label htmlFor="homeAddress" className="label">
                 Home Address:
               </label>
@@ -237,7 +237,7 @@ export default function Home() {
                   onChange={(e) => setHomeAddress(e.target.value)}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
