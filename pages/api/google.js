@@ -11,9 +11,13 @@ export default async (req, res) => {
 
   // Generate list of all days in the month
   const days = [];
+  console.log(daysInMonth, year, month);
   for (let i = 0; i < daysInMonth; i++) {
     const date = new Date(year, month - 1, i + 1);
-    days.push(date);
+    console.log(date);
+    if (date.getDay() !== 0 && date.getDay() !== 6) {
+      days.push(date);
+    }
   }
 
   const jsonDirectory = path.join(process.cwd(), "csv");

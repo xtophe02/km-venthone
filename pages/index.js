@@ -24,7 +24,7 @@ export const months = [
 
 export default function Home() {
   const [values, setValues] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [name, setName] = useState("");
   // const [homeAddress, setHomeAddress] = useState("diegem");
@@ -51,7 +51,7 @@ export default function Home() {
     const dates = [];
     for (let d = date; d <= lastDay; d.setDate(d.getDate() + 1)) {
       dates.push({
-        date: `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
+        date: `${d.getFullYear()}-${("0" + d.getMonth()).slice(-2)}-${(
           "0" + d.getDate()
         ).slice(-2)}`,
         description: "",
@@ -130,61 +130,58 @@ export default function Home() {
     // Set the font and size
     // doc.setFont("helvetica");
     // doc.setFontSize(14);
-    doc.addImage("/triglav.png", "PNG", 90, 10, 30, 30);
-    // doc.addPage();
-    // Add the data to the pdf
-    // values.forEach(function (value) {
-    //   if (value.distance != 0) {
-    //     doc.text(`Date: ${value.date}`, 10, 10);
-    //     doc.text(`From: ${value.from}`, 10, 20);
-    //     doc.text(`To: ${value.to}`, 10, 30);
-    //     doc.text(`Discription: ${value.description}`, 10, 40);
-    //     doc.text(`Distance: ${value.distance}`, 10, 50);
-    //     doc.addPage();
-    //   }
-    // });
-    // doc.text(`Total: ${calTotalKm().toFixed(2)}`, 10, 10);
-    // Save the pdf
-    doc.text("Vehicle Mileage", 10, 50);
-    doc.text(name, 10, 60);
+    doc.addImage("/triglav.jpg", "JPG", 20, 10, 20, 20);
+    doc.setFontSize(18);
+    doc.text("Vehicle Mileage", 90, 10);
+    doc.setFontSize(12);
+    doc.text(name, 90, 20);
+    doc.setFontSize(12);
+    doc.text(`${selectedYear} ${selectedMonth}`, 90, 30);
     doc.autoTable({
       styles: { fontSize: 8 },
-      margin: { top: 70 },
+      margin: { top: 40 },
       didDrawPage: function (data) {
         // Reseting top margin. The change will be reflected only after print the first page.
         data.settings.margin.top = 10;
       },
       head: [["Day", "Activity", "Origin", "Destination", "Distance (km)"]],
-      body: values.map((res) => {
-        // console.log(addressesWithPrevious);
-        return [
-          {
-            content: res.date,
-          },
-          {
-            content: res.description,
-          },
-          {
-            content: res.from,
-            styles: { halign: "center" },
-          },
-          {
-            content: res.to,
-            styles: { halign: "center" },
-          },
+      body: values
+        .filter((res) => res.distance > 0)
+        .map((res) => {
+          // console.log(addressesWithPrevious);
+          return [
+            {
+              content: res.date,
+            },
+            {
+              content: res.description,
+            },
+            {
+              content: res.from,
+              styles: { halign: "center" },
+            },
+            {
+              content: res.to,
+              styles: { halign: "center" },
+            },
 
-          {
-            content: res.distance.toFixed(2),
-            styles: { fontStyle: "bold", minCellHeight: 4 },
-          },
-        ];
-      }),
+            {
+              content: res.distance.toFixed(2),
+              styles: { fontStyle: "bold", minCellHeight: 4 },
+            },
+          ];
+        }),
 
       foot: [["Total", "", "", "", `${calTotalKm().toFixed(2)} km`]],
     });
 
-    doc.save("km.pdf");
+    doc.save(
+      `${name
+        .trim()
+        .replace(/ +/g, "")}_fraisKm_${selectedYear}_${selectedMonth}.pdf`
+    );
   }
+  // console.log(selectedMonth);
   return (
     <main className="section">
       <div className="container">
@@ -249,10 +246,10 @@ export default function Home() {
             <div className="select">
               <select
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                defaultValue={new Date().getMonth()}
+                defaultValue={selectedMonth}
               >
                 {months.map((month, index) => (
-                  <option value={index} key={month}>
+                  <option value={index + 1} key={month}>
                     {month}
                   </option>
                 ))}

@@ -7,9 +7,9 @@ import Navbar from "@/components/Navbar";
 import { exportPdf } from "@/utils/exportPdf";
 
 export default function AutoGenerate() {
-  const [name, setName] = useState("Christophe Moreira");
-  const [homeAddress, setHomeAddress] = useState("diegem");
-  const [month, setMonth] = useState(new Date().getMonth());
+  const [name, setName] = useState("");
+  const [homeAddress, setHomeAddress] = useState("");
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const [minDistance, setMinDistance] = useState(2000);
   const [results, setResults] = useState([]);
@@ -21,6 +21,10 @@ export default function AutoGenerate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (name.trim().length <= 0 || homeAddress.trim().length <= 0) {
+      alert("insert name");
+      return;
+    }
     setLoading(true);
     const response = await axios.post(`/api/google`, {
       homeAddress,
@@ -75,10 +79,10 @@ export default function AutoGenerate() {
                 <div className="select">
                   <select
                     onChange={(e) => setMonth(e.target.value)}
-                    defaultValue={new Date().getMonth()}
+                    defaultValue={month}
                   >
                     {months.map((month, index) => (
-                      <option value={index} key={month}>
+                      <option value={index + 1} key={month}>
                         {month}
                       </option>
                     ))}
@@ -114,7 +118,7 @@ export default function AutoGenerate() {
                 <button
                   className={`button ${loading && "is-loading"} is-info`}
                   type="submit"
-                  disabled={results.length > 0}
+                  // disabled={results.length > 0}
                 >
                   Generate
                 </button>
@@ -123,15 +127,17 @@ export default function AutoGenerate() {
                 <button
                   className="button is-danger"
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
                     exportPdf(
                       imageUrl,
                       results,
                       totalDistance,
                       name,
                       homeAddress
-                    )
-                  }
+                    );
+                    setResults([]);
+                    setTotalDistance(0);
+                  }}
                   disabled={results.length <= 0}
                 >
                   Export to PDF
