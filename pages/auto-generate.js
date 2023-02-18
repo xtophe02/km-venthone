@@ -5,6 +5,7 @@ import axios from "axios";
 import { months } from ".";
 import Navbar from "@/components/Navbar";
 import { exportPdf } from "@/utils/exportPdf";
+import Modal from "@/components/Modal";
 
 export default function AutoGenerate() {
   const [name, setName] = useState("");
@@ -15,12 +16,30 @@ export default function AutoGenerate() {
   const [results, setResults] = useState([]);
   const [totalDistance, setTotalDistance] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [credentials, setCredentials] = useState({
+    open: false,
+    username: "",
+    password: "",
+  });
 
   const imageUrl =
     "https://www.venthone.lu/wp-content/uploads/2021/07/logo-venthone.png";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { data } = await axios.post("/api/checkCredentials", {
+      username: credentials.username,
+      password: credentials.password,
+    });
+    // console.log(data);
+    if (!data) {
+      setCredentials((prev) => ({ ...prev, open: !prev.open }));
+      alert("invalid credentials");
+
+      return;
+    }
+    setCredentials((prev) => ({ ...prev, open: !prev.open }));
     if (name.trim().length <= 0 || homeAddress.trim().length <= 0) {
       alert("insert name");
       return;
@@ -36,13 +55,25 @@ export default function AutoGenerate() {
     setTotalDistance(response.data.totalDistance);
     setResults(response.data.results);
   };
-
+  function credentialsHandler(e) {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+  }
+  function modalHandler() {
+    // console.log("teste");
+    setCredentials((prev) => ({ ...prev, open: !prev.open }));
+  }
   return (
     <>
-      <Navbar />
+      <Modal
+        credentials={credentials}
+        credentialsHandler={credentialsHandler}
+        modalHandler={modalHandler}
+        handleSubmit={handleSubmit}
+      />
       <main className="section">
         <section className="container">
-          <form onSubmit={handleSubmit}>
+          <div>
             <div className="field">
               <label htmlFor="name" className="label">
                 Your Name:
@@ -117,8 +148,9 @@ export default function AutoGenerate() {
               <div className="control">
                 <button
                   className={`button ${loading && "is-loading"} is-info`}
-                  type="submit"
+                  // type="submit"
                   // disabled={results.length > 0}
+                  onClick={modalHandler}
                 >
                   Generate
                 </button>
@@ -181,7 +213,7 @@ export default function AutoGenerate() {
                 </tr>
               </tfoot>
             </table>
-          </form>
+          </div>
         </section>
       </main>
     </>
