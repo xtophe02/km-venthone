@@ -3,7 +3,7 @@ import axios from "axios";
 
 // import venthone from "../public/venthone.png";
 import { months } from ".";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 import { exportPdf } from "@/utils/exportPdf";
 import Modal from "@/components/Modal";
 
@@ -82,7 +82,7 @@ export default function AutoGenerate() {
                 <input
                   className="input"
                   type="text"
-                  id="namme"
+                  id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
