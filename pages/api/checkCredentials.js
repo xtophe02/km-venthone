@@ -5,17 +5,11 @@
 // }
 export default async (req, res) => {
   const { username, password } = req.body;
-  console.log(username === process.env.USERNAME);
-  console.log(password === process.env.PASSWORD);
-  try {
-    if (
-      username !== process.env.USERNAME &&
-      password !== process.env.PASSWORD
-    ) {
-      throw new Error("nok");
-    }
-    res.status(200).json({ data: true });
-  } catch (err) {
-    res.status(500).json({ data: false });
+  // console.log(username === process.env.USERNAME);
+  // console.log(password === process.env.PASSWORD);
+  let data = false;
+  if (username === process.env.USERNAME && password === process.env.PASSWORD) {
+    data = true;
   }
+  res.status(200).json({ data });
 };

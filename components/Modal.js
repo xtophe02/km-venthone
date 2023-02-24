@@ -32,15 +32,10 @@ export default function Modal({
             />
           </div>
         </div>
-        <div className="field is-grouped">
+        <div className="field">
           <div className="control">
             <button className="button is-link" type="submit">
               Submit
-            </button>
-          </div>
-          <div className="control">
-            <button className="button is-link is-light" onClick={modalHandler}>
-              Cancel
             </button>
           </div>
         </div>
@@ -48,7 +43,7 @@ export default function Modal({
       <button
         className="modal-close is-large"
         aria-label="close"
-        // onClick={modalHandler}
+        onClick={modalHandler}
       ></button>
     </div>
   );

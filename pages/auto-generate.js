@@ -32,8 +32,8 @@ export default function AutoGenerate() {
       username: credentials.username,
       password: credentials.password,
     });
-    // console.log(data);
-    if (!data) {
+
+    if (!data.data) {
       setCredentials((prev) => ({ ...prev, open: !prev.open }));
       alert("invalid credentials");
 
@@ -51,6 +51,7 @@ export default function AutoGenerate() {
       year,
       minKm: minDistance,
     });
+    // console.log(response);
     setLoading(false);
     setTotalDistance(response.data.totalDistance);
     setResults(response.data.results);

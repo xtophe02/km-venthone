@@ -11,10 +11,10 @@ export default async (req, res) => {
 
   // Generate list of all days in the month
   const days = [];
-  console.log(daysInMonth, year, month);
+  // console.log(daysInMonth, year, month);
   for (let i = 0; i < daysInMonth; i++) {
     const date = new Date(year, month - 1, i + 1);
-    console.log(date);
+    // console.log(date);
     if (date.getDay() !== 0 && date.getDay() !== 6) {
       days.push(date);
     }
@@ -57,14 +57,17 @@ export default async (req, res) => {
     const response = await axios.get(
       `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${homeAddress}&key=${API_KEY}`
     );
-    const distance = response.data.rows[0].elements[0].distance.value;
+    const distance = response.data.rows[0].elements[0];
+    if (!distance.hasOwnProperty("distance")) {
+      continue;
+    }
     addressesAndDistances.push({
       address: { address: homeAddress },
-      distance,
+      distance: distance.distance.value,
     });
 
     results.push({ day, addressesAndDistances });
-
+    // console.log(results);
     totalDistance = results.reduce((acc, { addressesAndDistances }) => {
       return (
         acc +
