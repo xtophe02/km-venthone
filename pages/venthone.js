@@ -130,7 +130,7 @@ export default function Home() {
     // Set the font and size
     // doc.setFont("helvetica");
     // doc.setFontSize(14);
-    doc.addImage("/triglav.jpg", "JPG", 20, 10, 20, 20);
+    doc.addImage("/venthone.png", "PNG", 20, 10, 20, 20);
     doc.setFontSize(18);
     doc.text("Vehicle Mileage", 90, 10);
     doc.setFontSize(12);
@@ -191,7 +191,7 @@ export default function Home() {
               <div className="media-left">
                 <Image
                   // className={styles.logo}
-                  src="/triglav.png"
+                  src="/venthone.png"
                   alt="Venthone Logo"
                   width={120}
                   height={120}

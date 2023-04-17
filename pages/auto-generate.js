@@ -12,6 +12,7 @@ export default function AutoGenerate() {
   const [homeAddress, setHomeAddress] = useState("");
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [portfolio, setPortfolio] = useState('venthone');
   const [minDistance, setMinDistance] = useState(2000);
   const [results, setResults] = useState([]);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -45,11 +46,13 @@ export default function AutoGenerate() {
       return;
     }
     setLoading(true);
+    
     const response = await axios.post(`/api/google`, {
       homeAddress,
-      month: new Date(`${month} 1, 2023`).getMonth() + 1,
+      month: new Date(`${month} 1, 2023`).getMonth() +1,
       year,
       minKm: minDistance,
+      portfolio
     });
     // console.log(response);
     setLoading(false);
@@ -64,6 +67,7 @@ export default function AutoGenerate() {
     // console.log("teste");
     setCredentials((prev) => ({ ...prev, open: !prev.open }));
   }
+  
   return (
     <>
       <Modal
@@ -104,7 +108,7 @@ export default function AutoGenerate() {
               </div>
             </div>
             <label htmlFor="" className="label">
-              Select month and year
+              Select Month, Year and Country
             </label>
             <div className="field is-grouped">
               <div className="control">
@@ -128,6 +132,26 @@ export default function AutoGenerate() {
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                 />
+              </div>
+              <div className="control">
+                <div className="select">
+                  <select
+                    onChange={(e) => setPortfolio(e.target.value)}
+                    defaultValue={portfolio}
+                  >
+                    
+                      <option value='venthone' >
+                        Venthone
+                      </option>
+                      <option value='mark' >
+                        Mark
+                      </option>
+                      <option value='chris' >
+                        Chris
+                      </option>
+                  
+                  </select>
+                </div>
               </div>
             </div>
 

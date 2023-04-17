@@ -4,25 +4,42 @@ import fs from "fs";
 
 export default async (req, res) => {
   const API_KEY = process.env.GOOGLE_API_KEY;
-  const { homeAddress, month, year, minKm } = req.body;
+  const { homeAddress, month, year, minKm , portfolio} = req.body;
 
   // Get number of days in the given month
   const daysInMonth = new Date(year, month, 0).getDate();
-
+  // console.log('MONTH:',month , daysInMonth)
   // Generate list of all days in the month
   const days = [];
   // console.log(daysInMonth, year, month);
-  for (let i = 0; i < daysInMonth; i++) {
-    const date = new Date(year, month - 1, i + 1);
-    // console.log(date);
+  for (let i = 1; i < daysInMonth+1; i++) {
+    const date = new Date(year, month-1, i + 1);
+    
     if (date.getDay() !== 0 && date.getDay() !== 6) {
       days.push(date);
     }
   }
+  // console.log(days[0],'-',days[days.length-1]);
 
-  const jsonDirectory = path.join(process.cwd(), "csv");
+  //PORTFOLIO
+  let addresses = []
+  if(portfolio === 'venthone'){
+    const jsonDirectory = path.join(process.cwd(), "csv");
 
-  const addresses = JSON.parse(fs.readFileSync(jsonDirectory + "/data.json"));
+   addresses = JSON.parse(fs.readFileSync(jsonDirectory + "/data.json"));
+  }
+  if(portfolio === 'mark'){
+    const cities = ["Brussels", "Antwerp", "Ghent", "Leuven", "Liège", "Namur", "Charleroi", "Mons", "Bruges", "Ostend", "Mechelen", "Genk", "Kortrijk"];
+    const offices = ["Engie Office", "Proximus Office", "Solvay Office", "Orange Office", "USB Office"];
+    for (let i = 0; i < offices.length; i++) {
+      for (let j = 0; j < cities.length; j++) {
+        addresses.push({ code: offices[i], address: cities[j] });
+      }
+    }
+    addresses.push({code:'European Comission Brussels',address:'Brussels'})
+    addresses.push({code:'European Comission Luxembourg',address:'Luxembourg'})
+    addresses.push({code:'European Comission Strasbourg',address:'Strasbourg'})
+  }
   const results = [];
   let totalDistance = 0;
 
